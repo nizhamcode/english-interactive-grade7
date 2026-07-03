@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>90-Day English Quest - SMP Kelas VII</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Font Google -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4f46e5;
+    }
+    /* Flashing animation */
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.5; }
+      50% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.5; }
+    }
+    .pulse-glow {
+      animation: pulse-ring 2s infinite;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+
+  <!-- TOP HEADER -->
+  <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="bg-indigo-600 p-2 rounded-xl text-2xl shadow-lg shadow-indigo-500/20 pulse-glow">
+        🚀
+      </div>
+      <div>
+        <h1 class="text-base sm:text-lg font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 to-sky-400 bg-clip-text text-transparent">
+          90-DAY ENGLISH QUEST
+        </h1>
+        <p class="text-[9px] sm:text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
+          Grade VII SMP • Kurikulum Merdeka
+        </p>
+      </div>
+    </div>
+
+    <!-- Gamified Stats Header -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <!-- Level Tracker -->
+      <div class="flex items-center gap-1.5 bg-slate-800/80 border border-slate-700/50 px-2.5 py-1 rounded-full text-xs">
+        <span class="text-yellow-400">⚡</span>
+        <span class="font-bold" id="level-display">Lv.1</span>
+      </div>
+
+      <!-- XP Tracker -->
+      <div class="hidden sm:flex items-center gap-1.5 bg-slate-800/80 border border-slate-700/50 px-2.5 py-1 rounded-full text-xs">
+        <span class="text-emerald-400">💎</span>
+        <span class="font-bold" id="xp-display">240/500 XP</span>
+      </div>
+
+      <!-- Streak Tracker -->
+      <div class="flex items-center gap-1.5 bg-slate-800/80 border border-slate-700/50 px-2.5 py-1 rounded-full text-xs">
+        <span class="text-orange-500">🔥</span>
+        <span class="font-bold">4 Hari</span>
+      </div>
+
+      <!-- AI Tutor Config Button -->
+      <button onclick="toggleApiModal(true)" class="p-2 bg-slate-800 hover:bg-indigo-600 hover:text-white rounded-lg border border-slate-700 hover:border-indigo-500 transition-all text-xs flex items-center gap-1">
+        <span>🤖</span>
+        <span class="hidden md:inline font-semibold">Tutor AI</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="fixed top-20 right-4 z-50 transform translate-y-[-100px] opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="px-4 py-2.5 bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 rounded-xl shadow-2xl flex items-center gap-2 font-bold text-sm">
+      <span id="toast-icon">✨</span> <span id="toast-text">Toast Message</span>
+    </div>
+  </div>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="flex-1 flex flex-col md:flex-row overflow-hidden">
+    
+    <!-- LEFT NAVIGATION BAR (Duolingo Style) -->
+    <aside class="md:w-64 bg-slate-900/60 border-r border-slate-800 p-3 sm:p-4 flex md:flex-col gap-2 justify-around md:justify-start overflow-x-auto md:overflow-x-visible">
+      <button onclick="switchTab('map')" id="btn-tab-map" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all bg-indigo-600/20 border border-indigo-500/50 text-indigo-400">
+        <span class="text-lg">🗺</span>
+        <span class="hidden md:inline">Quest Map</span>
+      </button>
+
+      <button onclick="switchTab('lessons')" id="btn-tab-lessons" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all hover:bg-slate-800 text-slate-400">
+        <span class="text-lg">📖</span>
+        <span class="hidden md:inline">Interactive Days</span>
+      </button>
+
+      <button onclick="switchTab('chat-ai')" id="btn-tab-chat-ai" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all hover:bg-slate-800 text-slate-400">
+        <span class="text-lg">🤖</span>
+        <span class="hidden md:inline">AI Companion</span>
+      </button>
+
+      <button onclick="switchTab('dictionary')" id="btn-tab-dictionary" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all hover:bg-slate-800 text-slate-400">
+        <span class="text-lg">🎴</span>
+        <span class="hidden md:inline">Vocab Desk</span>
+      </button>
+
+      <button onclick="switchTab('profile')" id="btn-tab-profile" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all hover:bg-slate-800 text-slate-400">
+        <span class="text-lg">🏅</span>
+        <span class="hidden md:inline">My Achievements</span>
+      </button>
+    </aside>
+
+    <!-- CONTENT CONTAINER -->
+    <section class="flex-1 overflow-y-auto p-4 md:p-6">
+      
+      <!-- TAB 1: QUEST MAP -->
+      <div id="tab-map" class="tab-content space-y-6">
+        <div class="bg-slate-800/40 border border-slate-700/30 p-5 rounded-2xl">
+          <span class="bg-indigo-500/10 text-indigo-400 text-xs font-bold px-3 py-1 rounded-full">🧭 EXPLORER CAMP</span>
+          <h2 class="text-2xl font-extrabold mt-2 text-white">English Knowledge Archipelago</h2>
+          <p class="text-slate-400 text-sm mt-1">Selesaikan misi harian dari pulau ke pulau selama 90 hari untuk menaklukkan Level CEFR A2.</p>
+        </div>
+
+        <!-- Archipelago Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Island 1 -->
+          <div class="relative p-5 rounded-2xl border bg-slate-800/80 border-indigo-500/50 shadow-indigo-500/10 shadow-lg">
+            <div class="flex justify-between items-start">
+              <div class="text-4xl">🌱</div>
+              <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase">Active Island</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mt-4">Island 1: Foundation</h3>
+            <p class="text-slate-400 text-xs mt-1 min-h-[32px]">Membangun dasar bahasa Inggris dari nol secara praktis.</p>
+            <div class="mt-4">
+              <div class="flex justify-between text-[10px] text-slate-400 font-bold mb-1">
+                <span>Pencapaian Misi</span>
+                <span>60%</span>
+              </div>
+              <div class="w-full bg-slate-700 rounded-full h-1.5 overflow-hidden">
+                <div class="bg-gradient-to-r from-indigo-500 to-sky-400 h-full" style="width: 60%"></div>
+              </div>
+            </div>
+            <button onclick="switchTab('lessons')" class="w-full mt-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all">
+              👉 Mulai Petualangan
+            </button>
+          </div>
+
+          <!-- Locked Island 2 -->
+          <div class="relative p-5 rounded-2xl border bg-slate-800/30 border-slate-700/40 opacity-75">
+            <div class="flex justify-between items-start">
+              <div class="text-4xl">🏫</div>
+              <span class="bg-slate-750 text-slate-500 border border-slate-700 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase">Locked</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mt-4">School Town</h3>
+            <p class="text-slate-400 text-xs mt-1 min-h-[32px]">Kosakata sekolah, harian, & tata bahasa dasar.</p>
+            <button onclick="playSFX('error'); alert('Tuntaskan Island 1 terlebih dahulu!')" class="w-full mt-4 py-2 bg-slate-700/50 text-slate-500 cursor-not-allowed rounded-xl text-xs font-bold transition-all">
+              🔒 Terkunci
+            </button>
+          </div>
+
+          <!-- Locked Island 3 -->
+          <div class="relative p-5 rounded-2xl border bg-slate-800/30 border-slate-700/40 opacity-75">
+            <div class="flex justify-between items-start">
+              <div class="text-4xl">🏡</div>
+              <span class="bg-slate-750 text-slate-500 border border-slate-700 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase">Locked</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mt-4">Family Village</h3>
+            <p class="text-slate-400 text-xs mt-1 min-h-[32px]">Memperkenalkan silsilah keluarga & kepemilikan benda.</p>
+            <button class="w-full mt-4 py-2 bg-slate-700/50 text-slate-500 cursor-not-allowed rounded-xl text-xs font-bold transition-all">
+              🔒 Terkunci
+            </button>
+          </div>
+        </div>
+
+        <!-- Syllabus Roadmap Route -->
+        <div class="bg-slate-800/30 border border-slate-700/30 rounded-2xl p-6">
+          <h3 class="text-xl font-extrabold text-white mb-4">90-Day Bootcamp Syllabus Route</h3>
+          <div class="space-y-4">
+            <div class="border-l-2 border-indigo-500 pl-4 space-y-2">
+              <h4 class="font-bold text-indigo-400 text-sm">📅 BULAN 1: FOUNDATION</h4>
+              <p class="text-slate-400 text-xs">Fokus pada fondasi bahasa dasar, tata bahasa, dan sapaan praktis di sekolah.</p>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
+                <button onclick="selectDay(1)" class="p-2 bg-indigo-600/10 border border-indigo-500/30 rounded-lg text-xs font-semibold text-center text-indigo-300">Week 1 (Hari 1-6)</button>
+                <div class="p-2 bg-slate-800/40 border border-slate-700 rounded-lg text-xs text-center text-slate-500">Week 2: School Life</div>
+                <div class="p-2 bg-slate-800/40 border border-slate-700 rounded-lg text-xs text-center text-slate-500">Week 3: Family</div>
+                <div class="p-2 bg-slate-800/40 border border-slate-700 rounded-lg text-xs text-center text-slate-500">Week 4: Routine</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: INTERACTIVE DAYS (LEARNING CENTER) -->
+      <div id="tab-lessons" class="tab-content hidden space-y-6">
+        
+        <!-- Day Selector slider -->
+        <div class="flex gap-2 overflow-x-auto pb-2 snap-x">
+          <button onclick="selectDay(1)" id="btn-day-1" class="day-selector-btn px-4 py-2.5 rounded-xl text-xs font-extrabold whitespace-nowrap snap-center transition-all bg-indigo-600 border border-indigo-400 text-white">🚀 Day 1: Intro</button>
+          <button onclick="selectDay(2)" id="btn-day-2" class="day-selector-btn px-4 py-2.5 rounded-xl text-xs font-extrabold whitespace-nowrap snap-center transition-all bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/50">🚀 Day 2: Alphabet</button>
+          <button onclick="selectDay(3)" id="btn-day-3" class="day-selector-btn px-4 py-2.5 rounded-xl text-xs font-extrabold whitespace-nowrap snap-center transition-all bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/50">🚀 Day 3: Pronounce</button>
+          <button onclick="selectDay(4)" id="btn-day-4" class="day-selector-btn px-4 py-2.5 rounded-xl text-xs font-extrabold whitespace-nowrap snap-center transition-all bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/50">🚀 Day 4: Vocab</button>
+          <button onclick="selectDay(5)" id="btn-day-5" class="day-selector-btn px-4 py-2.5 rounded-xl text-xs font-extrabold whitespace-nowrap snap-center transition-all bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/50">🚀 Day 5: Greetings</button>
+          <button onclick="selectDay(6)" id="btn-day-6" class="day-selector-btn px-4 py-2.5 rounded-xl text-xs font-extrabold whitespace-nowrap snap-center transition-all bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/50">🐉 Day 6: Boss Battle</button>
+        </div>
+
+        <!-- Daily Phase Navigation -->
+        <div class="grid grid-cols-5 bg-slate-800 p-1.5 rounded-2xl border border-slate-700/40">
+          <button onclick="switchPhase('warmup')" id="btn-phase-warmup" class="phase-btn py-2 rounded-xl text-[10px] md:text-xs font-extrabold uppercase transition-all text-center bg-indigo-600 text-white">Warm Up</button>
+          <button onclick="switchPhase('learn')" id="btn-phase-learn" class="phase-btn py-2 rounded-xl text-[10px] md:text-xs font-extrabold uppercase transition-all text-center text-slate-400 hover:text-white">Learn</button>
+          <button onclick="switchPhase('practice')" id="btn-phase-practice" class="phase-btn py-2 rounded-xl text-[10px] md:text-xs font-extrabold uppercase transition-all text-center text-slate-400 hover:text-white">Practice</button>
+          <button onclick="switchPhase('challenge')" id="btn-phase-challenge" class="phase-btn py-2 rounded-xl text-[10px] md:text-xs font-extrabold uppercase transition-all text-center text-slate-400 hover:text-white">Challenge</button>
+          <button onclick="switchPhase('review')" id="btn-phase-review" class="phase-btn py-2 rounded-xl text-[10px] md:text-xs font-extrabold uppercase transition-all text-center text-slate-400 hover:text-white">Review</button>
+        </div>
+
+        <!-- PAGE CONTAINER FOR DAY 1 -->
+        <div id="content-day-1" class="day-content space-y-4">
+          <!-- Warm Up -->
+          <div id="day1-warmup" class="phase-content bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30 space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="text-3xl">👋</span>
+              <div>
+                <h3 class="text-xl font-bold text-white">Warm Up: Welcome Explorer!</h3>
+                <p class="text-xs text-slate-400">Mulailah petualangan belajarmu hari ini.</p>
+              </div>
+            </div>
+            <p class="text-slate-300 text-sm leading-relaxed">
+              Selamat datang, Explorer! Kamu sekarang telah resmi bergabung sebagai pembelajar bahasa Inggris tangguh. Mari kita latih dasar yang paling penting: rasa percaya diri! Klik tombol suara di bawah untuk mendengar sapaan resmi pertamamu.
+            </p>
+            <button onclick="speak('Welcome young explorer! We are proud to have you on our English journey.')" class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-all">
+              🔊 DENGARKAN AUDIO NATIVE
+            </button>
+          </div>
+
+          <!-- Learn -->
+          <div id="day1-learn" class="phase-content hidden bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30 space-y-4">
+            <h3 class="text-lg font-bold text-white mb-2">Kenapa Harus Belajar Bahasa Inggris?</h3>
+            <p class="text-slate-300 text-sm leading-relaxed">
+              Bahasa Inggris adalah kunci global. Dengan menguasai bahasa Inggris, kamu bisa bercakap-cakap dengan teman dari seluruh belahan dunia, membaca ensiklopedia hebat, serta bersiap untuk masa depanmu yang cemerlang!
+            </p>
+            <div class="p-4 bg-slate-900 rounded-xl border border-slate-800 space-y-3">
+              <h4 class="text-xs font-bold text-indigo-400 uppercase tracking-wider">🧠 Mind Map: Complete English</h4>
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                <div onclick="speak('Speaking: Talking to other people.')" class="p-3 bg-slate-800 rounded-lg border border-slate-700 text-center hover:border-indigo-500 transition-all cursor-pointer">
+                  🗣 Speaking (Berbicara)
+                </div>
+                <div onclick="speak('Listening: Understanding native speakers.')" class="p-3 bg-slate-800 rounded-lg border border-slate-700 text-center hover:border-indigo-500 transition-all cursor-pointer">
+                  🎧 Listening (Mendengar)
+                </div>
+                <div onclick="speak('Reading: Reading books and stories.')" class="p-3 bg-slate-800 rounded-lg border border-slate-700 text-center hover:border-indigo-500 transition-all cursor-pointer">
+                  📖 Reading (Membaca)
+                </div>
+                <div onclick="speak('Writing: Typing letters and essays.')" class="p-3 bg-slate-800 rounded-lg border border-slate-700 text-center hover:border-indigo-500 transition-all cursor-pointer">
+                  ✍ Writing (Menulis)
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Practice -->
+          <div id="day1-practice" class="phase-content hidden bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30 space-y-4">
+            <h3 class="text-lg font-bold text-white">Interactive Shadowing Practice</h3>
+            <p class="text-slate-300 text-sm">Tekan tombol audio, lalu tirukan dengan keras (shadowing) kalimat perkenalan di bawah ini:</p>
+            <div class="space-y-2">
+              <div class="flex items-center gap-3 p-3 bg-slate-900 rounded-xl border border-slate-800">
+                <button onclick="speak('Hello, my name is John. I am a student.')" class="p-2.5 bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600 hover:text-white rounded-lg transition-all">🔊</button>
+                <div>
+                  <p class="font-bold text-xs text-indigo-300">Phrase 1</p>
+                  <p class="text-sm font-semibold">"Hello, my name is John. I am a student."</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Challenge -->
+          <div id="day1-challenge" class="phase-content hidden bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30 space-y-4">
+            <h3 class="text-lg font-bold text-white">Daily Quiz Challenge</h3>
+            <p class="text-xs text-slate-400">Selesaikan kuis interaktif di bawah untuk membuktikan pemahamanmu.</p>
+            <div id="day1-quiz-box" class="space-y-3">
+              <p class="font-bold text-sm">Pertanyaan: "My name is John" memiliki arti apa dalam bahasa Indonesia?</p>
+              <div class="grid grid-cols-1 gap-2">
+                <button onclick="submitDay1Quiz(true)" class="p-3 bg-slate-900 hover:bg-slate-800 rounded-xl border border-slate-700 text-left text-xs font-semibold">
+                  👉 Nama saya adalah John
+                </button>
+                <button onclick="submitDay1Quiz(false)" class="p-3 bg-slate-900 hover:bg-slate-800 rounded-xl border border-slate-700 text-left text-xs font-semibold">
+                  👉 Saya tinggal di John
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Review -->
+          <div id="day1-review" class="phase-content hidden bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30 space-y-3">
+            <h3 class="text-lg font-bold text-white">Smart Note & Common Mistakes</h3>
+            <div class="p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl">
+              <p class="text-xs font-bold text-amber-400">💡 SMART NOTE</p>
+              <p class="text-xs text-slate-300 mt-1">Jangan malu melafalkan bahasa Inggris dengan keras. Keberanian mengucapkan kalimat jauh lebih penting daripada tata bahasa di tahap awal!</p>
+            </div>
+            <div class="p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl">
+              <p class="text-xs font-bold text-rose-400">⚠ COMMON MISTAKE</p>
+              <p class="text-xs text-slate-300 mt-1">Siswa sering melupakan kata hubung "is/am/are" seperti mengucapkan "I student" yang seharusnya "I am a student."</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAGE CONTAINER FOR DAY 2 -->
+        <div id="content-day-2" class="day-content hidden space-y-4">
+          <!-- Warm Up -->
+          <div id="day2-warmup" class="phase-content bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30 space-y-4">
+            <h3 class="text-lg font-bold text-white">Warm Up: Alphabet Audio Phonics</h3>
+            <p class="text-slate-300 text-sm">Klik tombol huruf di bawah untuk melatih pelafalan alphabet native bahasa Inggris.</p>
+            <div class="grid grid-cols-6 sm:grid-cols-9 gap-2" id="alphabet-grid">
+              <!-- JS akan mengisi ini -->
+            </div>
+          </div>
+
+          <!-- Learn -->
+          <div id="day2-learn" class="phase-content hidden bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30 space-y-3">
+            <h3 class="text-lg font-bold text-white">How We Spell Names</h3>
+            <p class="text-slate-300 text-sm">Ketika berkenalan, native speaker sering meminta pengejaan nama. Contoh mengeja kata "J-O-H-N":</p>
+            <div class="p-4 bg-slate-900 rounded-xl flex items-center justify-between">
+              <span class="font-extrabold tracking-widest text-lg text-indigo-400">J - O - H - N</span>
+              <button onclick="speak('J, O, H, N')" class="px-3 py-1.5 bg-indigo-600 text-xs font-bold rounded-lg">🔊 Dengar Ejaan</button>
+            </div>
+          </div>
+
+          <!-- Practice -->
+          <div id="day2-practice" class="phase-content hidden bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30 space-y-4">
+            <div class="flex justify-between items-center">
+              <h3 class="text-lg font-bold text-white">Alphabet Drag spelling Bee</h3>
+              <button onclick="initDay2Spelling('WELCOME')" class="text-xs text-indigo-400 font-bold underline">Reset Word</button>
+            </div>
+            <p class="text-xs text-slate-400">Susunlah kata <strong class="text-white" id="spelling-target-word">WELCOME</strong> dengan menekan huruf-huruf di bawah secara berurutan:</p>
+            
+            <div class="flex flex-wrap gap-2 justify-center py-4" id="spelling-tiles">
+              <!-- Diisi JS -->
+            </div>
+
+            <div class="p-4 bg-slate-900 rounded-xl border border-slate-800 flex justify-between items-center">
+              <div>
+                <span class="text-xs font-bold text-slate-500 block">KATA YANG SEDANG DISUSUN:</span>
+                <span class="text-xl font-black text-emerald-400 tracking-widest uppercase" id="spelling-current-attempt"></span>
+              </div>
+              <button onclick="resetSpellingAttempt()" class="text-xs text-rose-400 font-bold">Hapus</button>
+            </div>
+          </div>
+
+          <!-- Challenge -->
+          <div id="day2-challenge" class="phase-content hidden bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30 space-y-3">
+            <h3 class="text-lg font-bold text-white">Daily Challenge: Spell Your Name</h3>
+            <p class="text-slate-300 text-sm">Gunakan kotak di bawah untuk melatih pengejaan namamu sendiri:</p>
+            <div class="flex gap-2">
+              <input type="text" placeholder="Ketik namamu..." id="spellingInput" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-indigo-500" />
+              <button onclick="spellYourOwnName()" class="px-4 py-2 bg-indigo-600 rounded-xl text-xs font-bold">🔊 Eja Sekarang</button>
+            </div>
+          </div>
+
+          <!-- Review -->
+          <div id="day2-review" class="phase-content hidden bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30">
+            <h3 class="text-lg font-bold text-white">Day 2 Recap & Notes</h3>
+            <div class="p-4 bg-indigo-500/10 border border-indigo-500/30 rounded-xl">
+              <p class="text-xs font-bold text-indigo-400">💡 ALPHABET TIP</p>
+              <p class="text-xs text-slate-300 mt-1">Ingat perbedaan pelafalan antara "G" (/dʒiː/) dan "J" (/dʒeɪ/). Kesalahan ini yang paling sering terjadi bagi pembelajar pemula!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAGE CONTAINER FOR DAY 3 -->
+        <div id="content-day-3" class="day-content hidden space-y-4">
+          <!-- Warm Up -->
+          <div id="day3-warmup" class="phase-content bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30 space-y-3">
+            <h3 class="text-lg font-bold text-white">Pronunciation: English Phonics Lab</h3>
+            <p class="text-slate-300 text-sm">Mari kita pelajari perbedaan vokal panjang dan pendek. Klik tombol suara di bawah ini:</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div onclick="speak('Sheep')" class="p-3 bg-slate-900 border border-slate-700 rounded-xl flex justify-between items-center cursor-pointer hover:border-indigo-500">
+                <div>
+                  <span class="font-bold text-indigo-400 block">Sheep (Domba)</span>
+                  <span class="text-[10px] text-slate-500">Long Vowel /ʃiːp/</span>
+                </div>
+                <span>🔊</span>
+              </div>
+              <div onclick="speak('Ship')" class="p-3 bg-slate-900 border border-slate-700 rounded-xl flex justify-between items-center cursor-pointer hover:border-indigo-500">
+                <div>
+                  <span class="font-bold text-indigo-400 block">Ship (Kapal)</span>
+                  <span class="text-[10px] text-slate-500">Short Vowel /ʃɪp/</span>
+                </div>
+                <span>🔊</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Learn -->
+          <div id="day3-learn" class="phase-content hidden bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30 space-y-3">
+            <h3 class="text-lg font-bold text-white">Silent Letters & Intonations</h3>
+            <p class="text-slate-300 text-sm">Beberapa huruf tidak diucapkan sama sekali saat dibaca (silent letters). Simak contoh berikut:</p>
+            <div class="p-4 bg-slate-900 rounded-xl space-y-2">
+              <div class="flex justify-between items-center cursor-pointer" onclick="speak('Knee')">
+                <span class="text-sm font-bold">Knee (Lutut) <span class="text-slate-500 font-normal">-- "K" tidak dibaca</span></span>
+                <span class="text-indigo-400 text-xs">🔊 Play /niː/</span>
+              </div>
+              <div class="flex justify-between items-center cursor-pointer" onclick="speak('Hour')">
+                <span class="text-sm font-bold">Hour (Jam) <span class="text-slate-500 font-normal">-- "H" tidak dibaca</span></span>
+                <span class="text-indigo-400 text-xs">🔊 Play /aʊər/</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Practice -->
+          <div id="day3-practice" class="phase-content hidden bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30 space-y-3">
+            <h3 class="text-lg font-bold text-white">Interactive Shadowing Compare</h3>
+            <p class="text-xs text-slate-400 font-semibold uppercase">Ucapkan kalimat ini berulang-ulang:</p>
+            <div class="p-4 bg-slate-900 border border-slate-700 rounded-xl space-y-3">
+              <p class="text-base font-extrabold italic text-center">"I eat rice in my clean classroom."</p>
+              <button onclick="speak('I eat rice in my clean classroom.')" class="w-full py-2 bg-indigo-600 rounded-xl text-xs font-bold">🔊 Dengar Contoh Native</button>
+            </div>
+          </div>
+
+          <!-- Challenge -->
+          <div id="day3-challenge" class="phase-content hidden bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30 space-y-4">
+            <h3 class="text-lg font-bold text-white">Pronunciation Battle (Self-Evaluate)</h3>
+            <p class="text-slate-300 text-sm">Gunakan slider untuk mengevaluasi seberapa mirip pelafalanmu dengan native speaker setelah kamu mempraktikkannya!</p>
+            <div class="space-y-3">
+              <div class="p-3 bg-slate-900 rounded-xl">
+                <p class="text-xs font-bold text-slate-500">Ucapkan kalimat:</p>
+                <p class="font-bold text-sm">"Sit down on your seat!"</p>
+              </div>
+              <div>
+                <label class="text-xs font-bold text-slate-400 block mb-1">Seberapa yakin kamu dengan pelafalanmu?</label>
+                <input type="range" min="1" max="100" value="75" class="w-full accent-indigo-500 h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer" />
+              </div>
+              <button onclick="submitDay3Evaluation()" class="w-full py-2 bg-indigo-600 rounded-xl text-xs font-bold">Kirim Evaluasi Diri</button>
+            </div>
+          </div>
+
+          <!-- Review -->
+          <div id="day3-review" class="phase-content hidden bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30">
+            <h3 class="text-lg font-bold text-white">Smart Tip</h3>
+            <div class="p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs text-slate-300 leading-relaxed">
+              Latih intonasimu dengan menyandarkan penekanan kata (word stress) pada kata kerja (verb) atau kata benda (noun) yang memegang makna penting di dalam kalimat.
+            </div>
+          </div>
+        </div>
+
+        <!-- PAGE CONTAINER FOR DAY 4 -->
+        <div id="content-day-4" class="day-content hidden space-y-4">
+          <!-- Warm Up -->
+          <div id="day4-warmup" class="phase-content bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30 space-y-4">
+            <h3 class="text-lg font-bold text-white">Warm Up: School Flashcards</h3>
+            <p class="text-slate-300 text-sm">Klik kartu untuk mendengar pelafalan kosakata alat sekolah bahasa Inggris:</p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="school-flashcards">
+              <!-- Diisi JS -->
+            </div>
+          </div>
+
+          <!-- Learn -->
+          <div id="day4-learn" class="phase-content hidden bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30 space-y-3">
+            <h3 class="text-lg font-bold text-white">School Objects Classroom Vocabulary</h3>
+            <p class="text-slate-300 text-sm">Untuk menyebutkan benda di dalam ruang kelas, kita menggunakan artikel 'A' (sebuah) untuk benda berawalan konsonan, dan 'An' untuk vokal.</p>
+            <div class="p-4 bg-slate-900 rounded-xl space-y-2">
+              <div class="flex justify-between cursor-pointer" onclick="speak('A bag')">
+                <span class="text-xs font-bold text-indigo-300">A Bag</span>
+                <span class="text-xs text-slate-400">Sebuah tas</span>
+              </div>
+              <div class="flex justify-between cursor-pointer" onclick="speak('An eraser')">
+                <span class="text-xs font-bold text-indigo-300">An Eraser</span>
+                <span class="text-xs text-slate-400">Sebuah penghapus</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Practice -->
+          <div id="day4-practice" class="phase-content hidden bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30 space-y-4">
+            <div class="flex justify-between items-center">
+              <h3 class="text-lg font-bold text-white">Vocabulary Memory Match</h3>
+              <button onclick="initMemoryGame()" class="text-xs text-indigo-400 font-bold underline">Ulangi Game</button>
+            </div>
+            <p class="text-xs text-slate-400">Pasangkan kartu Bahasa Inggris dengan arti Bahasa Indonesia yang sesuai.</p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3" id="memory-game-grid">
+              <!-- Diisi JS -->
+            </div>
+          </div>
+
+          <!-- Challenge -->
+          <div id="day4-challenge" class="phase-content hidden bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30 space-y-3">
+            <h3 class="text-lg font-bold text-white">Daily Vocabulary Challenge</h3>
+            <p class="text-slate-300 text-sm">Apakah arti dari kata "Whiteboard"?</p>
+            <div class="grid grid-cols-2 gap-2">
+              <button onclick="submitDay4Challenge(true)" class="p-3 bg-slate-900 border border-slate-700 rounded-xl text-xs font-bold hover:bg-slate-800 text-center">Papan Tulis Putih</button>
+              <button onclick="submitDay4Challenge(false)" class="p-3 bg-slate-900 border border-slate-700 rounded-xl text-xs font-bold hover:bg-slate-800 text-center">Meja Guru</button>
+            </div>
+          </div>
+
+          <!-- Review -->
+          <div id="day4-review" class="phase-content hidden bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30">
+            <h3 class="text-lg font-bold text-white">Vocabulary Smart Note</h3>
+            <p class="text-xs text-slate-400 mt-1">Biasakan mencatat setidaknya 5 kosakata ruang kelas baru setiap harinya dan tempelkan catatan lengket di benda-benda rumahmu untuk mempercepat hafalan.</p>
+          </div>
+        </div>
+
+        <!-- PAGE CONTAINER FOR DAY 5 -->
+        <div id="content-day-5" class="day-content hidden space-y-4">
+          <!-- Warm Up -->
+          <div id="day5-warmup" class="phase-content bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30 space-y-3">
+            <h3 class="text-lg font-bold text-white">Greetings & Intros</h3>
+            <p class="text-slate-300 text-sm">Mari kita pelajari percakapan sapaan yang umum saat pertama kali bertemu seseorang.</p>
+            <div class="p-4 bg-slate-900 rounded-xl space-y-2">
+              <div onclick="speak('Good Morning')" class="flex justify-between items-center cursor-pointer">
+                <span class="text-xs font-bold text-indigo-300">"Good Morning!"</span>
+                <span class="text-xs text-slate-500">Selamat pagi</span>
+              </div>
+              <div onclick="speak('Nice to meet you')" class="flex justify-between items-center cursor-pointer">
+                <span class="text-xs font-bold text-indigo-300">"Nice to meet you!"</span>
+                <span class="text-xs text-slate-500">Senang bertemu denganmu</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Learn -->
+          <div id="day5-learn" class="phase-content hidden bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30 space-y-3">
+            <h3 class="text-lg font-bold text-white">Formal vs Informal Greeting</h3>
+            <p class="text-slate-300 text-sm">Gunakan "Hello" untuk situasi formal dan "Hi" atau "How is it going?" untuk situasi santai/informal sesama teman sebaya.</p>
+          </div>
+
+          <!-- Practice -->
+          <div id="day5-practice" class="phase-content hidden bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30 space-y-4">
+            <h3 class="text-lg font-bold text-white">Interactive Roleplay Conversation</h3>
+            <p class="text-xs text-slate-400">Klik balon dialog bergantian untuk berlatih percakapan sapaan interaktif:</p>
+            <div class="space-y-3">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-sm font-bold">A</div>
+                <div onclick="speak('Hello, good morning! My name is Sarah.')" class="bg-slate-900 hover:bg-slate-850 p-3 rounded-r-xl rounded-bl-xl border border-slate-800 cursor-pointer flex-1">
+                  <p class="text-xs font-bold text-indigo-400">Sarah (🔊 Click to Hear):</p>
+                  <p class="text-sm">"Hello, good morning! My name is Sarah."</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 justify-end text-right">
+                <div onclick="speak('Hi Sarah! Good morning. I am David. Nice to meet you.')" class="bg-indigo-950 hover:bg-indigo-900 p-3 rounded-l-xl rounded-br-xl border border-indigo-900 cursor-pointer flex-1 text-left">
+                  <p class="text-xs font-bold text-emerald-400 text-right">David (🔊 Click to Hear):</p>
+                  <p class="text-sm">"Hi Sarah! Good morning. I am David. Nice to meet you."</p>
+                </div>
+                <div class="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-sm font-bold">B</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Challenge -->
+          <div id="day5-challenge" class="phase-content hidden bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30 space-y-3">
+            <h3 class="text-lg font-bold text-white">Self-Introduction Challenge</h3>
+            <p class="text-slate-300 text-sm">Ucapkan kalimat perkenalan di bawah ini sekencang mungkin di depan cermin!</p>
+            <div class="p-4 bg-slate-900 rounded-xl space-y-1 text-center font-bold text-sm">
+              <p class="text-indigo-400">"Good morning my friends! My name is Explorer. I am from Indonesia."</p>
+              <button onclick="speak('Good morning my friends! My name is Explorer. I am from Indonesia.')" class="mt-3 px-4 py-1.5 bg-indigo-600 text-xs rounded-xl">🔊 Dengar Contoh</button>
+            </div>
+          </div>
+
+          <!-- Review -->
+          <div id="day5-review" class="phase-content hidden bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30">
+            <h3 class="text-lg font-bold text-white">Greetings Common Error</h3>
+            <p class="text-xs text-rose-300 mt-1">Siswa Indonesia sering menjawab "I am fine, thank you" secara berulang. Native speaker juga sering mengucapkan "Great!", "Good!", atau "Not too bad!" saat menjawab kabar.</p>
+          </div>
+        </div>
+
+        <!-- PAGE CONTAINER FOR DAY 6 (BOSS BATTLE Arena) -->
+        <div id="content-day-6" class="day-content hidden space-y-4">
+          <div class="bg-gradient-to-b from-slate-900 to-slate-850 p-6 rounded-2xl border border-indigo-500/30 shadow-2xl relative overflow-hidden">
+            
+            <!-- Boss Header -->
+            <div class="flex justify-between items-center mb-6">
+              <div class="flex items-center gap-3">
+                <span class="text-5xl animate-bounce">🐲</span>
+                <div>
+                  <h3 class="text-xl font-extrabold text-rose-400">Dragon Grammar-claws</h3>
+                  <p class="text-xs text-slate-400">Ujian Mingguan Penjaga Gerbang Island 1</p>
+                </div>
+              </div>
+              
+              <!-- HP Bar -->
+              <div class="w-1/2 text-right">
+                <span class="text-xs font-bold text-rose-500" id="boss-hp-text">Boss HP: 100%</span>
+                <div class="w-full bg-slate-800 h-2.5 rounded-full mt-1 overflow-hidden">
+                  <div class="bg-rose-600 h-full transition-all duration-300 animate-pulse" id="boss-hp-bar" style="width: 100%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quiz Battle Area -->
+            <div id="boss-battle-playground" class="space-y-4">
+              <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-800">
+                <span class="text-xs font-bold text-indigo-400" id="boss-question-num">Pertanyaan 1 dari 5:</span>
+                <p class="font-extrabold text-sm mt-1 text-white" id="boss-question-text">Apa terjemahan bahasa Inggris dari 'Tas Sekolah'?</p>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5" id="boss-options-container">
+                <!-- Diisi JS -->
+              </div>
+            </div>
+
+            <!-- Success Outcome Card -->
+            <div id="boss-battle-victory" class="hidden p-6 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-center space-y-4">
+              <span class="text-5xl block">🏆</span>
+              <h4 class="text-xl font-bold text-emerald-400">MISSION COMPLETED!</h4>
+              <p class="text-sm text-slate-300 leading-relaxed">
+                Kamu berhasil menyelesaikan Weekly Boss Challenge dan membuka lencana berharga "Bronze Explorer"! Kamu telah siap berpindah ke School Town.
+              </p>
+              <div class="flex gap-2 justify-center">
+                <button onclick="resetBossBattle()" class="px-4 py-2 bg-slate-800 hover:bg-slate-750 text-xs font-bold rounded-xl">Ulangi Battle</button>
+                <button onclick="switchTab('profile')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-xs font-bold rounded-xl text-white">Lihat Pencapaian</button>
+              </div>
+            </div>
+
+            <!-- Battle logs drawer -->
+            <div class="mt-6 border-t border-slate-800 pt-4">
+              <span class="text-xs font-bold text-slate-400 block mb-2">Battle Logs:</span>
+              <div class="h-24 overflow-y-auto space-y-1 text-left text-slate-400 text-[11px] font-semibold" id="boss-logs">
+                <p>Quest dimulai! Kalahkan Dragon Grammar-claws!</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- TAB 3: AI LEARNING COMPANION -->
+      <div id="tab-chat-ai" class="tab-content hidden space-y-6">
+        <!-- API Setup Alert -->
+        <div id="api-alert-banner" class="bg-amber-500/10 border border-amber-500/30 p-5 rounded-2xl space-y-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">💡</span>
+            <h3 class="font-extrabold text-amber-400 text-sm">Aktifkan Tutor AI Companion (Tutor Engie)</h3>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Untuk dapat mengobrol secara real-time dengan asisten bahasa Inggris interaktif Anda, harap masukkan **Gemini API Key** Anda dengan mengeklik tombol di bawah ini. Anda dapat memperoleh kunci gratis dari Google AI Studio.
+          </p>
+          <button onclick="toggleApiModal(true)" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-black text-xs rounded-xl transition-all">
+            🔑 Konfigurasi API Key
+          </button>
+        </div>
+
+        <!-- Chat Container -->
+        <div class="bg-slate-800/30 border border-slate-700/30 rounded-2xl overflow-hidden flex flex-col h-[500px]">
+          <!-- Chat Header -->
+          <div class="bg-slate-800/80 p-4 border-b border-slate-700/50 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">🤖</span>
+              <div>
+                <h4 class="font-extrabold text-white text-sm">Engie - AI Companion</h4>
+                <p class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span> Active Tutor
+                </p>
+              </div>
+            </div>
+            <button onclick="resetChat()" class="text-xs text-slate-400 hover:text-white font-bold">Reset Obrolan</button>
+          </div>
+
+          <!-- Messages Log -->
+          <div class="flex-1 overflow-y-auto p-4 space-y-4" id="chat-logs-container">
+            <!-- Pesan Pembuka Default -->
+            <div class="flex gap-3 max-w-[85%]">
+              <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold">🤖</div>
+              <div class="p-3 bg-slate-800 text-slate-100 rounded-2xl rounded-tl-none">
+                <p class="text-xs md:text-sm font-semibold">Hello Explorer! 👋 I am Engie, your AI English Companion. Let's practice simple introduction!</p>
+                <button onclick="speak('Hello Explorer! I am Engie, your AI English Companion. Let us practice simple introduction!')" class="mt-2 text-[10px] bg-slate-900/60 hover:bg-slate-950 px-2 py-1 rounded font-bold text-indigo-300 block w-fit">🔊 Dengarkan Audio</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Input Area -->
+          <div class="p-4 bg-slate-800/50 border-t border-slate-700/50 flex gap-2">
+            <input type="text" id="chat-input" placeholder="Tulis pesan perkenalan atau pertanyaanmu..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" onkeydown="if(event.key === 'Enter') sendChatMessage()" />
+            <button onclick="sendChatMessage()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm rounded-xl transition-all shadow-lg">Kirim</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: VOCABULARY DESK -->
+      <div id="tab-dictionary" class="tab-content hidden space-y-6">
+        <div class="bg-slate-800/40 p-5 rounded-2xl border border-slate-700/30">
+          <h3 class="text-lg font-bold text-white mb-1">Vocabulary Desk & Interactive Phonics</h3>
+          <p class="text-xs text-slate-400">Tekan salah satu kata penting di bawah ini untuk berlatih cara pengucapan asli (Phonetics) dan terjemahannya.</p>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="dictionary-grid">
+          <!-- Diisi JS -->
+        </div>
+      </div>
+
+      <!-- TAB 5: ACHIEVEMENTS PROFILE -->
+      <div id="tab-profile" class="tab-content hidden space-y-6">
+        <!-- Profile Header -->
+        <div class="bg-slate-800/40 p-6 rounded-2xl border border-slate-700/30 flex flex-col sm:flex-row items-center gap-5">
+          <div class="w-16 h-16 bg-gradient-to-tr from-indigo-500 to-sky-400 rounded-2xl flex items-center justify-center text-3xl shadow-xl">
+            🎓
+          </div>
+          <div class="flex-1 text-center sm:text-left space-y-1">
+            <h3 class="text-xl font-extrabold text-white">Elite English Explorer VII</h3>
+            <p class="text-xs text-slate-400">Booster Target: "From Zero to Confident English Speaker in 90 Days"</p>
+            
+            <div class="w-full bg-slate-700 h-2 rounded-full overflow-hidden mt-3 max-w-md">
+              <div class="bg-indigo-500 h-full" id="profile-progress-bar" style="width: 48%"></div>
+            </div>
+            <span class="text-[10px] font-bold text-slate-400 block" id="profile-xp-text">240 / 500 XP menuju Level 2</span>
+          </div>
+        </div>
+
+        <!-- Badges Drawer -->
+        <div class="space-y-3">
+          <h4 class="text-lg font-bold text-white">🏆 Unlocked Badge Badges</h4>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="badges-grid">
+            <!-- Diisi JS -->
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- GEMINI API CONFIG MODAL -->
+  <div id="api-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-md w-full space-y-4 shadow-2xl">
+      <div class="flex justify-between items-start">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🔑</span>
+          <h4 class="font-extrabold text-white text-base">Atur Gemini API Key</h4>
+        </div>
+        <button onclick="toggleApiModal(false)" class="text-slate-400 hover:text-white font-extrabold text-sm">✕</button>
+      </div>
+
+      <p class="text-xs text-slate-400 leading-relaxed">
+        Dapatkan API Key dari konsol Google AI Studio secara gratis untuk menghidupkan 'Engie' asisten AI Anda yang tangguh. Kunci disimpan secara aman di browser Anda.
+      </p>
+
+      <div class="space-y-1.5">
+        <label class="text-xs font-bold text-slate-400 block">Kunci API Gemini</label>
+        <input type="password" id="gemini-key-input" placeholder="AIzaSy..." class="w-full bg-slate-800 border border-slate-750 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono" />
+      </div>
+
+      <button onclick="saveApiKey()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl">
+        Simpan & Aktifkan Tutor AI
+      </button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-950 px-4 py-3 border-t border-slate-800 text-center text-[10px] text-slate-500 font-semibold uppercase tracking-widest">
+    © 2026 Global English Academy • Kurikulum Merdeka SMP Kelas VII • CEFR A1 → A2
+  </footer>
+
+  <!-- SCRIPT UTAMA MODULE -->
+  <script>
+    // State global modul
+    let level = 1;
+    let xp = 240;
+    let streak = 4;
+    let unlockedBadges = ['Vocabulary Hunter'];
+    let currentDay = 1;
+    let currentPhase = 'warmup';
+    let apiKey = '';
+
+    // Database Kosakata Sekolah
+    const VOCAB_DATABASE = [
+      { word: "Bag", meaning: "Tas", emoji: "🎒", phonics: "/bæɡ/" },
+      { word: "Book", meaning: "Buku", emoji: "📖", phonics: "/bʊk/" },
+      { word: "Chair", meaning: "Kursi", emoji: "🪑", phonics: "/tʃeər/" },
+      { word: "Teacher", meaning: "Guru", emoji: "👩‍🏫", phonics: "/ˈtiː.tʃər/" },
+      { word: "Student", meaning: "Siswa", emoji: "🧑‍🎓", phonics: "/ˈstjuː.dənt/" },
+      { word: "Pen", meaning: "Pena", emoji: "🖊", phonics: "/pen/" },
+      { word: "Pencil", meaning: "Pensil", emoji: "✏", phonics: "/ˈpen.səl/" },
+      { word: "Classroom", meaning: "Ruang Kelas", emoji: "🏫", phonics: "/ˈklɑːs.ruːm/" }
+    ];
+
+    // Day 2 Spelling Bee Game State
+    let spellingTarget = "WELCOME";
+    let spellingSelected = [];
+    let spellingJumbled = [];
+
+    // Day 4 Memory Match Game State
+    let memoryCards = [];
+    let selectedCards = [];
+    let matchedPairs = [];
+
+    // Day 6 Boss Challenge State
+    let bossHp = 100;
+    let bossCurrentQuestion = 0;
+    let bossLogs = ["Quest dimulai! Kalahkan Dragon Grammar-claws!"];
+    const BOSS_QUESTIONS = [
+      { q: "Apa terjemahan bahasa Inggris dari 'Tas Sekolah'?", options: ["School Bag", "School Pencil", "School Classroom", "Teacher"], ans: 0 },
+      { q: "Mengeja kata 'STUDENT' dengan ejaan yang benar adalah...", options: ["Es - Te - Yu - Di - I - En - Ti", "S - T - U - D - E - N - T", "S - T - O - D - E - N - T", "Es - Te - U - De - E - En - Te"], ans: 1 },
+      { q: "Vokal di dalam bahasa Inggris terdiri dari...", options: ["B, C, D, F, G", "A, E, I, O, U", "X, Y, Z", "S, T, U, V, W"], ans: 1 },
+      { q: "Sapaan yang diucapkan pada jam 8 pagi hari...", options: ["Good Afternoon", "Good Evening", "Good Night", "Good Morning"], ans: 3 },
+      { q: "Lengkapi: 'My name ... Explorer Ali.'", options: ["are", "am", "is", "were"], ans: 2 }
+    ];
+
+    // Web Audio API Sound Synthesizer (Duolingo Style)
+    function playSFX(type) {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+
+        if (type === 'success') {
+          // Arpeggio C5 -> E5 -> G5 -> C6
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.1);
+          osc.frequency.setValueAtTime(783.99, now + 0.2);
+          osc.frequency.setValueAtTime(1046.50, now + 0.3);
+          gain.gain.setValueAtTime(0.3, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+          osc.start(now);
+          osc.stop(now + 0.5);
+        } else if (type === 'error') {
+          // Low buzzing sound
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(150, now);
+          osc.frequency.exponentialRampToValueAtTime(90, now + 0.3);
+          gain.gain.setValueAtTime(0.4, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+          osc.start(now);
+          osc.stop(now + 0.35);
+        } else if (type === 'click') {
+          // Light click sound
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(600, now);
+          osc.frequency.exponentialRampToValueAtTime(300, now + 0.08);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else if (type === 'level-up') {
+          // Ascending magical chime
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(300, now);
+          osc.frequency.exponentialRampToValueAtTime(1200, now + 0.6);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+          osc.start(now);
+          osc.stop(now + 0.6);
+        }
+      } catch (e) {
+        console.warn("Sistem Audio Web gagal diinisiasi", e);
+      }
+    }
+
+    // Text-to-Speech Pronunciation Reader
+    function speak(text, rate = 0.85) {
+      playSFX('click');
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = rate;
+        
+        // Pilih suara bahasa Inggris premium jika tersedia
+        const voices = window.speechSynthesis.getVoices();
+        const premiumVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Samantha')));
+        if (premiumVoice) {
+          utterance.voice = premiumVoice;
+        }
+        window.speechSynthesis.speak(utterance);
+      } else {
+        alert("Audio Text-to-Speech tidak didukung pada peramban ini.");
+      }
+    }
+
+    // Toast Generator
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toast-text');
+      const toastIcon = document.getElementById('toast-icon');
+
+      toastText.innerText = message;
+      if (type === 'success') {
+        toast.className = "fixed top-20 right-4 z-50 transform translate-y-0 opacity-100 transition-all duration-300 bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 font-bold text-sm";
+        toastIcon.innerText = "🎉";
+      } else if (type === 'error') {
+        toast.className = "fixed top-20 right-4 z-50 transform translate-y-0 opacity-100 transition-all duration-300 bg-rose-500/20 border border-rose-500/50 text-rose-300 px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 font-bold text-sm";
+        toastIcon.innerText = "❌";
+      } else {
+        toast.className = "fixed top-20 right-4 z-50 transform translate-y-0 opacity-100 transition-all duration-300 bg-slate-800 border border-slate-700 text-indigo-300 px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 font-bold text-sm";
+        toastIcon.innerText = "💡";
+      }
+
+      setTimeout(() => {
+        toast.className = "fixed top-20 right-4 z-50 transform translate-y-[-100px] opacity-0 transition-all duration-300 pointer-events-none";
+      }, 3000);
+    }
+
+    // State Reward & Level System
+    function gainXP(amount) {
+      xp += amount;
+      showToast(`+${amount} XP Berhasil Diraih!`, 'success');
+      const xpNeeded = level * 500;
+      if (xp >= xpNeeded) {
+        level++;
+        xp -= xpNeeded;
+        playSFX('level-up');
+        showToast(`🎉 Level Up! Kamu sekarang Level ${level}!`, 'success');
+      }
+      updateStatsUI();
+    }
+
+    function updateStatsUI() {
+      document.getElementById('level-display').innerText = `Lv.${level}`;
+      document.getElementById('xp-display').innerText = `${xp}/${level * 500} XP`;
+      document.getElementById('profile-xp-text').innerText = `${xp} / ${level * 500} XP menuju Level ${level + 1}`;
+      document.getElementById('profile-progress-bar').style.width = `${(xp / (level * 500)) * 100}%`;
+    }
+
+    // Switching Main Tabs
+    function switchTab(tabId) {
+      playSFX('click');
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+      // Update Nav Button Styles
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all hover:bg-slate-800 text-slate-400";
+      });
+      document.getElementById(`btn-tab-${tabId}`).className = "nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all bg-indigo-600/20 border border-indigo-500/50 text-indigo-400";
+
+      // Render tab-specific layouts
+      if (tabId === 'dictionary') {
+        renderDictionary();
+      } else if (tabId === 'profile') {
+        renderAchievements();
+      }
+    }
+
+    // Switching Days
+    function selectDay(dayNum) {
+      playSFX('click');
+      currentDay = dayNum;
+      
+      // Update Day Button UI
+      document.querySelectorAll('.day-selector-btn').forEach(btn => {
+        btn.className = "day-selector-btn px-4 py-2.5 rounded-xl text-xs font-extrabold whitespace-nowrap snap-center transition-all bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/50";
+      });
+      document.getElementById(`btn-day-${dayNum}`).className = "day-selector-btn px-4 py-2.5 rounded-xl text-xs font-extrabold whitespace-nowrap snap-center transition-all bg-indigo-600 border border-indigo-400 text-white";
+
+      // Toggle Day Content
+      document.querySelectorAll('.day-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`content-day-${dayNum}`).classList.remove('hidden');
+
+      switchPhase('warmup');
+
+      // Initializers per day game
+      if (dayNum === 2) {
+        initDay2Spelling("WELCOME");
+      } else if (dayNum === 4) {
+        initMemoryGame();
+      } else if (dayNum === 6) {
+        resetBossBattle();
+      }
+    }
+
+    // Switching Learning Phase (Warmup, Learn, etc.)
+    function switchPhase(phaseId) {
+      playSFX('click');
+      currentPhase = phaseId;
+
+      // Update Phase Button CSS
+      document.querySelectorAll('.phase-btn').forEach(btn => {
+        btn.className = "phase-btn py-2 rounded-xl text-[10px] md:text-xs font-extrabold uppercase transition-all text-center text-slate-400 hover:text-white";
+      });
+      document.getElementById(`btn-phase-${phaseId}`).className = "phase-btn py-2 rounded-xl text-[10px] md:text-xs font-extrabold uppercase transition-all text-center bg-indigo-600 text-white";
+
+      // Switch sub phase visibility for the active day
+      document.querySelectorAll(`#content-day-${currentDay} .phase-content`).forEach(el => el.classList.add('hidden'));
+      const activePhaseElement = document.getElementById(`day${currentDay}-${phaseId}`);
+      if (activePhaseElement) {
+        activePhaseElement.classList.remove('hidden');
+      }
+    }
+
+    // DAY 1 CHALLENGE
+    function submitDay1Quiz(isCorrect) {
+      if (isCorrect) {
+        playSFX('success');
+        gainXP(50);
+        document.getElementById('day1-quiz-box').innerHTML = `
+          <div class="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl space-y-2">
+            <p class="font-bold text-emerald-400">🎉 Sempurna! Jawabanmu 100% benar!</p>
+            <p class="text-xs text-slate-300">Kamu berhasil meraih bonus +50 XP harian!</p>
+          </div>
+        `;
+      } else {
+        playSFX('error');
+        showToast("Oops! Jawabanmu belum tepat. Coba lagi!", "error");
+      }
+    }
+
+    // DAY 2 PHONICS GRID INITIALIZER
+    function initAlphabetGrid() {
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+      const grid = document.getElementById('alphabet-grid');
+      grid.innerHTML = '';
+      letters.forEach(letter => {
+        const btn = document.createElement('button');
+        btn.className = "p-2 bg-slate-900 hover:bg-indigo-600 rounded-lg text-xs font-extrabold border border-slate-800 transition-all text-indigo-400 hover:text-white";
+        btn.innerText = letter;
+        btn.onclick = () => speak(letter, 0.75);
+        grid.appendChild(btn);
+      });
+    }
+
+    // DAY 2 SPELLING BEE GAME
+    function initDay2Spelling(word) {
+      spellingTarget = word;
+      spellingSelected = [];
+      document.getElementById('spelling-target-word').innerText = word;
+      document.getElementById('spelling-current-attempt').innerText = '';
+
+      // Jumble letters
+      spellingJumbled = word.split('').sort(() => Math.random() - 0.5);
+      renderSpellingTiles();
+    }
+
+    function renderSpellingTiles() {
+      const container = document.getElementById('spelling-tiles');
+      container.innerHTML = '';
+      spellingJumbled.forEach((letter, idx) => {
+        const isUsed = spellingSelected.some(item => item.originalIdx === idx);
+        const tile = document.createElement('button');
+        tile.className = `w-12 h-12 rounded-xl text-lg font-bold transition-all ${
+          isUsed ? 'bg-slate-800 text-slate-600 border border-slate-750 cursor-not-allowed' : 'bg-slate-900 border border-slate-700 hover:border-indigo-500 text-indigo-300'
+        }`;
+        tile.innerText = letter;
+        tile.disabled = isUsed;
+        tile.onclick = () => selectSpellingTile(letter, idx);
+        container.appendChild(tile);
+      });
+    }
+
+    function selectSpellingTile(letter, idx) {
+      playSFX('click');
+      spellingSelected.push({ letter, originalIdx: idx });
+      
+      const currentAttempt = spellingSelected.map(item => item.letter).join('');
+      document.getElementById('spelling-current-attempt').innerText = currentAttempt;
+      renderSpellingTiles();
+
+      if (currentAttempt === spellingTarget) {
+        playSFX('success');
+        gainXP(50);
+        showToast("Hebat! Ejaan kamu 100% Benar!", "success");
+        setTimeout(() => {
+          const words = ["ENGLISH", "ACADEMY", "STUDENT", "TEACHER", "CLASSROOM"];
+          const next = words[Math.floor(Math.random() * words.length)];
+          initDay2Spelling(next);
+        }, 1500);
+      } else if (currentAttempt.length === spellingTarget.length) {
+        playSFX('error');
+        showToast("Oops! Susunan huruf masih keliru. Coba kembali!", "error");
+        resetSpellingAttempt();
+      }
+    }
+
+    function resetSpellingAttempt() {
+      spellingSelected = [];
+      document.getElementById('spelling-current-attempt').innerText = '';
+      renderSpellingTiles();
+    }
+
+    function spellYourOwnName() {
+      const val = document.getElementById('spellingInput').value;
+      if (val) {
+        speak(val.split('').join(', '));
+        gainXP(30);
+      } else {
+        showToast("Ketik namamu terlebih dahulu!", "error");
+      }
+    }
+
+    // DAY 3 EVALUATION
+    function submitDay3Evaluation() {
+      playSFX('success');
+      gainXP(40);
+      showToast("Luar biasa! Pelafalanmu terekam & dinilai sangat baik!", "success");
+    }
+
+    // DAY 4 FLASHCARDS & MEMORY GAME
+    function initMemoryGame() {
+      const items = VOCAB_DATABASE.slice(0, 4);
+      // Double the cards (one word, one meaning)
+      const pairs = [
+        ...items.map((item, idx) => ({ id: `w-${idx}`, val: item.word, type: 'word', emoji: item.emoji })),
+        ...items.map((item, idx) => ({ id: `m-${idx}`, val: item.meaning, type: 'meaning', emoji: item.emoji }))
+      ].sort(() => Math.random() - 0.5);
+
+      memoryCards = pairs;
+      selectedCards = [];
+      matchedPairs = [];
+      renderMemoryCards();
+    }
+
+    function renderMemoryCards() {
+      const container = document.getElementById('memory-game-grid');
+      container.innerHTML = '';
+      memoryCards.forEach(card => {
+        const isSelected = selectedCards.some(c => c.id === card.id);
+        const isMatched = matchedPairs.includes(card.id);
+
+        const div = document.createElement('div');
+        div.className = `h-24 rounded-xl flex flex-col justify-center items-center p-2 text-center transition-all cursor-pointer border ${
+          isMatched ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300 cursor-not-allowed opacity-60' :
+          isSelected ? 'bg-indigo-600 border-indigo-400 text-white' : 'bg-slate-900 border-slate-800 hover:border-slate-700 text-slate-300'
+        }`;
+
+        if (isMatched || isSelected) {
+          div.innerHTML = `
+            <span class="text-2xl mb-1">${card.emoji}</span>
+            <span class="font-extrabold text-xs">${card.val}</span>
+          `;
+        } else {
+          div.innerHTML = `<span class="text-2xl">❓</span>`;
+          div.onclick = () => selectMemoryCard(card);
+        }
+        container.appendChild(div);
+      });
+    }
+
+    function selectMemoryCard(card) {
+      if (selectedCards.length >= 2) return;
+      playSFX('click');
+      selectedCards.push(card);
+      renderMemoryCards();
+
+      if (selectedCards.length === 2) {
+        const [first, second] = selectedCards;
+        const firstIdx = first.id.split('-')[1];
+        const secondIdx = second.id.split('-')[1];
+
+        if (firstIdx === secondIdx && first.type !== second.type) {
+          // Matched
+          matchedPairs.push(first.id, second.id);
+          selectedCards = [];
+          playSFX('success');
+          gainXP(20);
+          renderMemoryCards();
+
+          if (matchedPairs.length === memoryCards.length) {
+            showToast("🎉 Selamat! Kamu menyelesaikan Memory Card Game!", "success");
+            gainXP(100);
+            if (!unlockedBadges.includes("Listening Master")) {
+              unlockedBadges.push("Listening Master");
+            }
+          }
+        } else {
+          // No match
+          setTimeout(() => {
+            selectedCards = [];
+            playSFX('error');
+            renderMemoryCards();
+          }, 1000);
+        }
+      }
+    }
+
+    function initDay4Flashcards() {
+      const container = document.getElementById('school-flashcards');
+      container.innerHTML = '';
+      VOCAB_DATABASE.forEach(item => {
+        const card = document.createElement('div');
+        card.className = "bg-slate-900 hover:bg-slate-800 p-4 rounded-xl border border-slate-800 hover:border-indigo-500/50 transition-all text-center cursor-pointer space-y-2";
+        card.onclick = () => speak(item.word);
+        card.innerHTML = `
+          <span class="text-3xl block">${item.emoji}</span>
+          <span class="font-bold text-xs block text-white">${item.word}</span>
+          <span class="text-[10px] text-slate-400 block italic">${item.phonics}</span>
+          <span class="text-[10px] text-slate-500 block">${item.meaning}</span>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function submitDay4Challenge(isCorrect) {
+      if (isCorrect) {
+        playSFX('success');
+        gainXP(30);
+        showToast("Jawaban tepat! Whiteboard adalah papan tulis putih.", "success");
+      } else {
+        playSFX('error');
+        showToast("Jawaban keliru, coba ingat kembali pelajaran kosakata sekolah!", "error");
+      }
+    }
+
+    // DAY 6 BOSS BATTLE SYSTEM
+    function resetBossBattle() {
+      bossHp = 100;
+      bossCurrentQuestion = 0;
+      bossLogs = ["Quest dimulai! Kalahkan Dragon Grammar-claws!"];
+      document.getElementById('boss-battle-playground').classList.remove('hidden');
+      document.getElementById('boss-battle-victory').classList.add('hidden');
+      renderBossQuestion();
+      updateBossHp();
+    }
+
+    function updateBossHp() {
+      document.getElementById('boss-hp-text').innerText = `Boss HP: ${bossHp}%`;
+      document.getElementById('boss-hp-bar').style.width = `${bossHp}%`;
+    }
+
+    function renderBossQuestion() {
+      const currentQ = BOSS_QUESTIONS[bossCurrentQuestion];
+      document.getElementById('boss-question-num').innerText = `Pertanyaan ${bossCurrentQuestion + 1} dari ${BOSS_QUESTIONS.length}:`;
+      document.getElementById('boss-question-text').innerText = currentQ.q;
+
+      const optionsContainer = document.getElementById('boss-options-container');
+      optionsContainer.innerHTML = '';
+      currentQ.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = "p-3 bg-slate-900 hover:bg-slate-800 hover:border-indigo-500 border border-slate-750 rounded-xl text-left text-xs font-bold transition-all text-slate-300 hover:text-white";
+        btn.innerText = `👉 ${opt}`;
+        btn.onclick = () => submitBossAnswer(idx);
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function submitBossAnswer(optionIndex) {
+      const currentQ = BOSS_QUESTIONS[bossCurrentQuestion];
+      const bossLogsContainer = document.getElementById('boss-logs');
+
+      if (optionIndex === currentQ.ans) {
+        playSFX('success');
+        const dmg = 20;
+        bossHp = Math.max(0, bossHp - dmg);
+        bossLogs.unshift(`⚔ Kamu menyerang Dragon dengan kebenaran! Dmg: -${dmg} HP`);
+        gainXP(40);
+      } else {
+        playSFX('error');
+        bossLogs.unshift(`🔥 Dragon menyemburkan api! Jawabanmu kurang tepat.`);
+      }
+
+      updateBossHp();
+
+      // Render logs
+      bossLogsContainer.innerHTML = bossLogs.map(log => `<p>${log}</p>`).join('');
+
+      if (bossCurrentQuestion + 1 < BOSS_QUESTIONS.length) {
+        bossCurrentQuestion++;
+        renderBossQuestion();
+      } else {
+        // Battle End
+        if (bossHp <= 0) {
+          playSFX('level-up');
+          if (!unlockedBadges.includes("Bronze Explorer")) unlockedBadges.push("Bronze Explorer");
+          if (!unlockedBadges.includes("Grammar Hero")) unlockedBadges.push("Grammar Hero");
+          
+          document.getElementById('boss-battle-playground').classList.add('hidden');
+          document.getElementById('boss-battle-victory').classList.remove('hidden');
+        } else {
+          showToast("Pertarungan selesai! Dragon masih bertahan hidup. Coba ulang kembali!", "error");
+          resetBossBattle();
+        }
+      }
+    }
+
+    // TAB 3: GEMINI AI TUTOR INTEGRATION
+    function toggleApiModal(show) {
+      playSFX('click');
+      const modal = document.getElementById('api-modal');
+      if (show) {
+        modal.classList.remove('hidden');
+        document.getElementById('gemini-key-input').value = apiKey;
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    function saveApiKey() {
+      apiKey = document.getElementById('gemini-key-input').value.trim();
+      toggleApiModal(false);
+      if (apiKey) {
+        document.getElementById('api-alert-banner').classList.add('hidden');
+        playSFX('success');
+        showToast("Gemini API Key disimpan dengan aman!", "success");
+      }
+    }
+
+    function resetChat() {
+      playSFX('click');
+      document.getElementById('chat-logs-container').innerHTML = `
+        <div class="flex gap-3 max-w-[85%]">
+          <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold">🤖</div>
+          <div class="p-3 bg-slate-800 text-slate-100 rounded-2xl rounded-tl-none">
+            <p class="text-xs md:text-sm font-semibold">Hello Explorer! 👋 I am Engie, your AI English Companion. Let's practice simple introduction!</p>
+            <button onclick="speak('Hello Explorer! I am Engie, your AI English Companion. Let us practice simple introduction!')" class="mt-2 text-[10px] bg-slate-900/60 hover:bg-slate-950 px-2 py-1 rounded font-bold text-indigo-300 block w-fit">🔊 Dengarkan Audio</button>
+          </div>
+        </div>
+      `;
+    }
+
+    async function sendChatMessage() {
+      const input = document.getElementById('chat-input');
+      const userMsg = input.value.trim();
+      if (!userMsg) return;
+
+      playSFX('click');
+      input.value = '';
+
+      const container = document.getElementById('chat-logs-container');
+      
+      // Append User message
+      const userBubble = document.createElement('div');
+      userBubble.className = "flex gap-3 max-w-[85%] ml-auto flex-row-reverse";
+      userBubble.innerHTML = `
+        <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-xs font-bold">ME</div>
+        <div class="p-3 bg-indigo-600 text-white rounded-2xl rounded-tr-none">
+          <p class="text-xs md:text-sm font-semibold">${userMsg}</p>
+        </div>
+      `;
+      container.appendChild(userBubble);
+      container.scrollTop = container.scrollHeight;
+
+      if (!apiKey) {
+        showToast("Harap pasang API Key terlebih dahulu!", "error");
+        return;
+      }
+
+      // Loading Placeholder
+      const loadBubble = document.createElement('div');
+      loadBubble.className = "flex gap-3 max-w-[85%]";
+      loadBubble.id = "ai-loading-placeholder";
+      loadBubble.innerHTML = `
+        <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold">🤖</div>
+        <div class="p-3 bg-slate-800 text-slate-100 rounded-2xl rounded-tl-none flex items-center gap-2">
+          <span class="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce"></span>
+          <span class="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+          <span class="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></span>
+        </div>
+      `;
+      container.appendChild(loadBubble);
+      container.scrollTop = container.scrollHeight;
+
+      // Call API
+      const systemPrompt = "Act as 'Engie', an extremely friendly, responsive, and encouraging English Learning AI companion for Grade 7 SMP students in Indonesia. Keep responses very short, simple, grammatically clear, and easy to read (A1-A2 CEFR level). Support translation for tricky words by writing Indonesian in parentheses. Do not write lengthy code, speak direct simple dialogue, and correct their mistakes gently.";
+      const payload = {
+        contents: [{
+          parts: [{ text: `User says: ${userMsg}` }]
+        }],
+        systemInstruction: {
+          parts: [{ text: systemPrompt }]
+        }
+      };
+
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+      try {
+        let response, data;
+        let retries = 5;
+        let delay = 1000;
+        
+        while (retries > 0) {
+          try {
+            response = await fetch(url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            if (response.ok) {
+              data = await response.json();
+              break;
+            }
+          } catch (fetchErr) {
+            console.warn(`Fetch gagal, mencoba lagi dalam ${delay}ms...`, fetchErr);
+          }
+          retries--;
+          if (retries === 0) throw new Error("Gagal melakukan panggilan API setelah beberapa percobaan.");
+          await new Promise(res => setTimeout(res, delay));
+          delay *= 2;
+        }
+
+        const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Oops, I had a small connection error. Let's try again! (Oops, koneksi error. Coba lagi yuk!)";
+        
+        // Remove loading
+        document.getElementById('ai-loading-placeholder').remove();
+
+        // Append AI response
+        const aiBubble = document.createElement('div');
+        aiBubble.className = "flex gap-3 max-w-[85%]";
+        aiBubble.innerHTML = `
+          <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold">🤖</div>
+          <div class="p-3 bg-slate-800 text-slate-100 rounded-2xl rounded-tl-none">
+            <p class="text-xs md:text-sm font-semibold">${aiText}</p>
+            <button onclick="speak(\`${aiText.replace(/`/g, '\\`').replace(/"/g, '&quot;')}\`)" class="mt-2 text-[10px] bg-slate-900/60 hover:bg-slate-950 px-2 py-1 rounded font-bold text-indigo-300 block w-fit">🔊 Dengarkan Audio</button>
+          </div>
+        `;
+        container.appendChild(aiBubble);
+        container.scrollTop = container.scrollHeight;
+
+      } catch (err) {
+        console.error(err);
+        document.getElementById('ai-loading-placeholder').remove();
+        showToast("Terjadi kegagalan koneksi dengan model Gemini AI.", "error");
+      }
+    }
+
+    // TAB 4: VOCAB DESK RENDERING
+    function renderDictionary() {
+      const grid = document.getElementById('dictionary-grid');
+      grid.innerHTML = '';
+      VOCAB_DATABASE.forEach(v => {
+        const item = document.createElement('div');
+        item.className = "p-4 bg-slate-800/30 hover:bg-slate-800/80 rounded-2xl border border-slate-700/40 hover:border-indigo-500 transition-all cursor-pointer text-center space-y-2 group";
+        item.onclick = () => speak(v.word);
+        item.innerHTML = `
+          <span class="text-4xl block group-hover:scale-110 transition-transform">${v.emoji}</span>
+          <h4 class="font-extrabold text-base text-white">${v.word}</h4>
+          <p class="text-xs text-indigo-400 font-mono">${v.phonics}</p>
+          <div class="pt-2 border-t border-slate-800">
+            <span class="bg-slate-900 text-slate-300 text-[10px] font-bold px-2 py-1 rounded-full uppercase">${v.meaning}</span>
+          </div>
+        `;
+        grid.appendChild(item);
+      });
+    }
+
+    // TAB 5: PROFILE & ACHIEVEMENTS RENDERING
+    function renderAchievements() {
+      const grid = document.getElementById('badges-grid');
+      grid.innerHTML = '';
+      const allBadges = [
+        { name: "Bronze Explorer", icon: "🥉", desc: "Selesaikan ujian mingguan pertama", key: "Bronze Explorer" },
+        { name: "Vocabulary Hunter", icon: "🎒", desc: "Kumpulkan 10+ kata baru", key: "Vocabulary Hunter" },
+        { name: "Listening Master", icon: "🎧", desc: "Menangkan permainan memori kosakata", key: "Listening Master" },
+        { name: "Grammar Hero", icon: "⚔", desc: "Kalahkan bos naga pertama", key: "Grammar Hero" }
+      ];
+
+      allBadges.forEach(badge => {
+        const isUnlocked = unlockedBadges.includes(badge.key);
+        const div = document.createElement('div');
+        div.className = `p-4 rounded-2xl border text-center space-y-2 ${
+          isUnlocked ? 'bg-slate-800/70 border-amber-500/30 text-slate-100 shadow-lg' : 'bg-slate-900 border-slate-800/40 text-slate-600 opacity-50'
+        }`;
+        div.innerHTML = `
+          <span class="text-4xl block">${isUnlocked ? badge.icon : "🔒"}</span>
+          <h5 class="font-extrabold text-xs">${badge.name}</h5>
+          <p class="text-[10px] text-slate-400">${badge.desc}</p>
+        `;
+        grid.appendChild(div);
+      });
+    }
+
+    // Inisialisasi awal saat halaman termuat sepenuhnya
+    window.onload = function () {
+      initAlphabetGrid();
+      initDay4Flashcards();
+    };
+  </script>
+</body>
+</html>
